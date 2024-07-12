@@ -1,6 +1,8 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Union
+
+from httpx import URL, Response
 
 if TYPE_CHECKING:
     from ._client import LibSocial, AsyncLibSocial
@@ -8,21 +10,27 @@ if TYPE_CHECKING:
 
 class SyncAPIResource:
     _client: LibSocial
+    base_url: str
 
-    def __init__(self, client: LibSocial, base_url: str) -> None:
+    def __init__(self, client: LibSocial) -> None:
         self._client = client
-        self._client.base_url = base_url
 
-        self._get = client.get
-        self._post = client.post
+    def _get(self, path: Union[str, URL], **kwargs) -> Response:
+        return self._client.get(self.base_url, path, **kwargs)
+
+    def _post(self, path: Union[str, URL], **kwargs) -> Response:
+        return self._client.post(self.base_url, path, **kwargs)
 
 
 class AsyncAPIResource:
     _client: AsyncLibSocial
+    base_url: str
 
-    def __init__(self, client: AsyncLibSocial, base_url: str) -> None:
+    def __init__(self, client: AsyncLibSocial) -> None:
         self._client = client
-        self._client.base_url = base_url
 
-        self._get = client.get
-        self._post = client.post
+    async def _get(self, path: Union[str, URL], **kwargs) -> Response:
+        return await self._client.get(self.base_url, path, **kwargs)
+
+    async def _post(self, path: Union[str, URL], **kwargs) -> Response:
+        return await self._client.post(self.base_url, path, **kwargs)

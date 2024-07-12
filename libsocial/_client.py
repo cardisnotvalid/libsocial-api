@@ -14,8 +14,8 @@ class LibSocial(SyncAPIClient):
     def __init__(self) -> None:
         super().__init__()
 
-        self.manga = resources.Manga(self, "https://api.lib.social")
-        self.forum = resources.Forum(self, "https://lib.social")
+        self.manga = resources.Manga(self)
+        self.forum = resources.Forum(self)
 
     @property
     def default_category(self) -> Dict[str, Any]:
@@ -29,8 +29,8 @@ class AsyncLibSocial(AsyncAPIClient):
     def __init__(self) -> None:
         super().__init__()
 
-        self.manga = resources.AsyncManga(self, "https://api.lib.social")
-        self.forum = resources.AsyncForum(self, "https://lib.social")
+        self.manga = resources.AsyncManga(self)
+        self.forum = resources.AsyncForum(self)
 
     @property
     def default_category(self) -> Dict[str, Any]:

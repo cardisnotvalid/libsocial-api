@@ -17,30 +17,34 @@ def manga_info_fields() -> str:
 
 
 class Manga(SyncAPIResource):
+    base_url = "https://api.lib.social"
+
     def search(self, query: str, *, page: int = 1) -> MangaPageModel:
         data = self._get("/api/manga", params={"q": query, "page": page}).json()
-        return MangaPageModel.loads(data)
+        return MangaPageModel(**data)
 
     def get_page(self, page: int = 1) -> MangaPageModel:
         data = self._get("/api/manga", params={"page": page}).json()
-        return MangaPageModel.loads(data)
+        return MangaPageModel(**data)
 
     def get_manga(self, slug_url: str) -> MangaInfoModel:
         fields = manga_info_fields()
         data = self._get(f"/api/manga/{slug_url}?{fields}").json()
-        return MangaInfoModel.loads(data)
+        return MangaInfoModel(**data)
 
 
 class AsyncManga(AsyncAPIResource):
+    base_url = "https://api.lib.social"
+
     async def search(self, query: str, *, page: int = 1) -> MangaPageModel:
         data = (await self._get("/api/manga", params={"q": query, "page": page})).json()
-        return MangaPageModel.loads(data)
+        return MangaPageModel(**data)
 
     async def get_page(self, page: int = 1) -> MangaPageModel:
         data = (await self._get("/api/manga", params={"page": page})).json()
-        return MangaPageModel.loads(data)
+        return MangaPageModel(**data)
 
     async def get_manga(self, slug_url: str) -> MangaInfoModel:
         fields = manga_info_fields()
         data = (await self._get(f"/api/manga/{slug_url}?{fields}")).json()
-        return MangaInfoModel.loads(data)
+        return MangaInfoModel(**data)

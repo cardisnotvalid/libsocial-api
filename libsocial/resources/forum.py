@@ -6,7 +6,9 @@ from ..enums import Category
 
 
 class Forum(SyncAPIResource):
-    def get_discussions_category(
+    base_url = "https://lib.social"
+
+    def get_category(
         self,
         category: Union[str, int, Category],
         *,
@@ -20,13 +22,13 @@ class Forum(SyncAPIResource):
             "/api/forum/discussion",
             params={"category": category, "page": page, "sort": sort}
         ).json()
-        return CategoryModel.from_dict(data)
+        return CategoryModel(**data)
 
     def get_discussion(self, discussion_id: int) -> DiscussionModel:
         data = self._get(f"/api/forum/discussion/{discussion_id}").json()
-        return DiscussionModel.from_dict(data)
+        return DiscussionModel(**data)
 
-    def get_discussion_comments(
+    def get_comments(
         self,
         discussion_id: int,
         *,
@@ -36,11 +38,13 @@ class Forum(SyncAPIResource):
             "/api/forum/posts",
             params={"discussion_id": discussion_id, "page": page}
         ).json()
-        return CommentModel.from_dict(data)
+        return CommentModel(**data)
 
 
 class AsyncForum(AsyncAPIResource):
-    async def get_discussions_category(
+    base_url = "https://lib.social"
+
+    async def get_category(
         self,
         category: Union[str, int, Category],
         *,
@@ -54,13 +58,13 @@ class AsyncForum(AsyncAPIResource):
             "/api/forum/discussion",
             params={"category": category, "page": page, "sort": sort}
         )).json()
-        return CategoryModel.from_dict(data)
+        return CategoryModel(**data)
 
     async def get_discussion(self, discussion_id: int) -> DiscussionModel:
         data = (await self._get(f"/api/forum/discussion/{discussion_id}")).json()
-        return DiscussionModel.from_dict(data)
+        return DiscussionModel(**data)
 
-    async def get_discussion_comments(
+    async def get_comments(
         self,
         discussion_id: int,
         *,
@@ -70,4 +74,4 @@ class AsyncForum(AsyncAPIResource):
             "/api/forum/posts",
             params={"discussion_id": discussion_id, "page": page}
         )).json()
-        return CommentModel.from_dict(data)
+        return CommentModel(**data)
