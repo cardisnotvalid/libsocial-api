@@ -1,7 +1,7 @@
 from urllib.parse import urlencode
 
 from .._resource import SyncAPIResource, AsyncAPIResource
-from ..models.manga import MangaPageModel, MangaInfoModel
+from ..models.manga import PageModel, InfoModel, RelationModel, SimilarModel, CharacterModel
 
 
 def manga_info_fields() -> str:
@@ -19,32 +19,58 @@ def manga_info_fields() -> str:
 class Manga(SyncAPIResource):
     base_url = "https://api.lib.social"
 
-    def search(self, query: str, *, page: int = 1) -> MangaPageModel:
+    def search(self, query: str, *, page: int = 1) -> PageModel:
         data = self._get("/api/manga", params={"q": query, "page": page}).json()
-        return MangaPageModel(**data)
+        return PageModel(**data)
 
-    def get_page(self, page: int = 1) -> MangaPageModel:
+    def get_page(self, page: int = 1) -> PageModel:
         data = self._get("/api/manga", params={"page": page}).json()
-        return MangaPageModel(**data)
+        return PageModel(**data)
 
-    def get_manga(self, slug_url: str) -> MangaInfoModel:
+    def get_manga(self, slug_url: str) -> InfoModel:
         fields = manga_info_fields()
         data = self._get(f"/api/manga/{slug_url}?{fields}").json()
-        return MangaInfoModel(**data)
+        return InfoModel(**data)
+
+    def get_relations(self, slug_url: str) -> RelationModel:
+        data = self._get(f"/api/manga/{slug_url}/relations").json()
+        return RelationModel(**data)
+
+    def get_similar(self, slug_url: str) -> SimilarModel:
+        data = self._get(f"/api/manga/{slug_url}/similar").json()
+        return SimilarModel(**data)
+
+    def get_characters(self, manga_id: int, *, limit: int = 30, page: int = 1) -> CharacterModel:
+        params = {"media_id": manga_id, "page": page, "limit": limit, "media_type": "manga"}
+        data = self._get("/api/character", params=params).json()
+        return CharacterModel(**data)
 
 
 class AsyncManga(AsyncAPIResource):
     base_url = "https://api.lib.social"
 
-    async def search(self, query: str, *, page: int = 1) -> MangaPageModel:
+    async def search(self, query: str, *, page: int = 1) -> PageModel:
         data = (await self._get("/api/manga", params={"q": query, "page": page})).json()
-        return MangaPageModel(**data)
+        return PageModel(**data)
 
-    async def get_page(self, page: int = 1) -> MangaPageModel:
+    async def get_page(self, page: int = 1) -> PageModel:
         data = (await self._get("/api/manga", params={"page": page})).json()
-        return MangaPageModel(**data)
+        return PageModel(**data)
 
-    async def get_manga(self, slug_url: str) -> MangaInfoModel:
+    async def get_manga(self, slug_url: str) -> InfoModel:
         fields = manga_info_fields()
         data = (await self._get(f"/api/manga/{slug_url}?{fields}")).json()
-        return MangaInfoModel(**data)
+        return InfoModel(**data)
+
+    async def get_relations(self, slug_url: str) -> RelationModel:
+        data = (await self._get(f"/api/manga/{slug_url}/relations")).json()
+        return RelationModel(**data)
+
+    async def get_similar(self, slug_url: str) -> SimilarModel:
+        data = (await self._get(f"/api/manga/{slug_url}/similar")).json()
+        return SimilarModel(**data)
+
+    async def get_characters(self, manga_id: int, *, limit: int = 30, page: int = 1) -> CharacterModel:
+        params = {"media_id": manga_id, "page": page, "limit": limit, "media_type": "manga"}
+        data = (await self._get("/api/character", params=params)).json()
+        return CharacterModel(**data)
