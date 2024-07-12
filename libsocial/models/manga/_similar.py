@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any, List, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 
 class Cover(BaseModel):
@@ -22,20 +22,12 @@ class Type(BaseModel):
     label: str
 
 
-class Rating(BaseModel):
-    average: str
-    averageFormated: str
-    votes: int
-    votesFormated: str
-    user: int
-
-
 class Status(BaseModel):
     id: int
     label: str
 
 
-class Datum(BaseModel):
+class Media(BaseModel):
     id: int
     name: str
     rus_name: str
@@ -46,31 +38,25 @@ class Datum(BaseModel):
     ageRestriction: AgeRestriction
     site: int
     type: Type
-    rating: Rating
+    is_licensed: bool
     model: str
     status: Status
     releaseDateString: str
 
 
-class Links(BaseModel):
-    first: str
-    last: Any
-    prev: Any
-    next: Any
+class Votes(BaseModel):
+    up: int
+    down: int
+    user: Any
 
 
-class Meta(BaseModel):
-    current_page: int
-    from_: int = Field(..., alias="from")
-    path: str
-    per_page: int
-    to: int
-    page: int
-    has_next_page: bool
-    seed: str
+class Datum(BaseModel):
+    id: int
+    similar: str
+    user_id: int
+    media: Media
+    votes: Votes
 
 
-class PageModel(BaseModel):
+class SimilarModel(BaseModel):
     data: List[Datum]
-    links: Links
-    meta: Meta

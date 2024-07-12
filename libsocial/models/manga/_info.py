@@ -13,7 +13,7 @@ class Cover(BaseModel):
 
 
 class Background(BaseModel):
-    filename: str
+    filename: Optional[str] = None
     url: str
 
 
@@ -221,6 +221,6 @@ class Meta(BaseModel):
     country: str
 
 
-class MangaInfoModel(BaseModel):
+class InfoModel(BaseModel):
     data: Data
     meta: Meta
