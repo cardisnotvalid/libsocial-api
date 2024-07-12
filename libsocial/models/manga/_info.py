@@ -1,79 +1,65 @@
 from __future__ import annotations
 
-from typing import Any, List
+from typing import Any, List, Optional
 
-from dataclasses import dataclass
+from pydantic import BaseModel
 
 
-@dataclass
-class Cover:
+class Cover(BaseModel):
     filename: str
     thumbnail: str
     default: str
     md: str
 
 
-@dataclass
-class Background:
+class Background(BaseModel):
     filename: str
     url: str
 
 
-@dataclass
-class AgeRestriction:
+class AgeRestriction(BaseModel):
     id: int
     label: str
 
 
-@dataclass
-class Type:
+class Type(BaseModel):
     id: int
     label: str
 
 
-@dataclass
-class Views:
+class Views(BaseModel):
     total: int
     short: str
-    formatted: str
-
-    @classmethod
-    def loads(cls, data: Data[str, Any]) -> Views:
-        return cls(formatted=data.pop("formated"), **data)
+    formated: str
 
 
-@dataclass
-class Rating:
+class Rating(BaseModel):
     average: str
-    average_formatted: str
+    averageFormated: str
     votes: int
-    votes_formatted: str
+    votesFormated: str
     user: int
 
-    @classmethod
-    def loads(cls, data: Dict[str, Any]) -> Rating:
-        return cls(
-            average_formatted=data.pop("averageFormated"),
-            votes_formatted=data.pop("votesFormated"),
-            **data,
-        )
 
-
-@dataclass
-class Moderated:
+class Moderated(BaseModel):
     id: int
     label: str
 
 
-@dataclass
-class Details:
-    branch_id: int
+class Cover(BaseModel):
+    filename: Optional[str]
+    thumbnail: str
+    default: str
+    md: str
+
+
+class Details(BaseModel):
+    branch_id: Optional[int] = None
     is_active: bool
-    subscriptions_count: Optional[int]
+    subscriptions_count: Any
 
 
-@dataclass
-class Team:
+class Team(BaseModel):
     id: int
     slug: str
     slug_url: str
@@ -82,41 +68,29 @@ class Team:
     cover: Cover
     details: Details
 
-    @classmethod
-    def loads(cls, data: Dict[str, Any]) -> Team:
-        return cls(
-            cover=Cover(**data.pop("cover")),
-            details=Details(**data.pop("details")),
-            **data,
-        )
 
-
-@dataclass
-class Genre:
+class Genre(BaseModel):
     id: int
     name: str
     adult: bool
     alert: bool
 
 
-@dataclass
-class Tag:
+class Tag(BaseModel):
     id: int
     name: str
     adult: bool
     alert: bool
 
 
-@dataclass
-class Subscription:
+class Subscription(BaseModel):
     is_subscribed: bool
     source_type: str
     source_id: int
     relation: Any
 
 
-@dataclass
-class Publisher:
+class PublisherItem(BaseModel):
     id: int
     slug: str
     slug_url: str
@@ -126,26 +100,8 @@ class Publisher:
     cover: Cover
     subscription: Subscription
 
-    @classmethod
-    def loads(cls, data: Dict[str, Any]) -> Publisher:
-        return cls(
-            cover=Cover(**data.pop("cover")),
-            subscription=Subscription(**data.pop("subscription")),
-            **data,
-        )
 
-
-@dataclass
-class Franchise:
-    id: int
-    slug: str
-    slug_url: str
-    model: str
-    name: str
-
-
-@dataclass
-class Author:
+class Author(BaseModel):
     id: int
     slug: str
     slug_url: str
@@ -158,35 +114,20 @@ class Author:
     confirmed: Any
     user_id: int
 
-    @classmethod
-    def loads(cls, data: Dict[str, Any]) -> Author:
-        return cls(
-            cover=Cover(**data.pop("cover")),
-            subscription=Subscription(**data.pop("subscription")),
-            **data,
-        )
+
+class Characters(BaseModel):
+    Main: int
+    Supporting: int
 
 
-@dataclass
-class Characters:
-    main: int
-    supporting: int
-
-    @classmethod
-    def loads(cls, data: Dict[str, int]) -> Characters:
-        return cls(main=data["Main"], supporting=data["Supporting"])
-
-
-@dataclass
-class Reviews:
+class Reviews(BaseModel):
     neutral: int
     positive: int
     negative: int
     all: int
 
 
-@dataclass
-class Count:
+class Count(BaseModel):
     branches: int
     characters: Characters
     reviews: Reviews
@@ -194,45 +135,28 @@ class Count:
     people: int
     covers: int
 
-    @classmethod
-    def loads(cls, data: Dict[str, Any]) -> Count:
-        return cls(
-            characters=Characters.loads(data.pop("characters")),
-            reviews=Reviews(**data.pop("reviews")),
-            **data,
-        )
 
-
-@dataclass
-class Metadata:
+class Metadata(BaseModel):
     close_comments: int
     count: Count
 
-    @classmethod
-    def loads(cls, data: Dict[str, Any]) -> Metadata:
-        return cls(count=Count.loads(data.pop("count")), **data)
 
-
-@dataclass
-class Status:
+class Status(BaseModel):
     id: int
     label: str
 
 
-@dataclass
-class ItemsCount:
+class ItemsCount(BaseModel):
     uploaded: int
     total: int
 
 
-@dataclass
-class ScanlateStatus:
+class ScanlateStatus(BaseModel):
     id: int
     label: str
 
 
-@dataclass
-class Artist:
+class Artist(BaseModel):
     id: int
     slug: str
     slug_url: str
@@ -245,32 +169,34 @@ class Artist:
     confirmed: Any
     user_id: int
 
-    @classmethod
-    def loads(cls, data: Dict[str, Any]) -> Artist:
-        return cls(
-            cover=Cover(**data.pop("cover")),
-            subscription=Subscription(**data.pop("subscription")),
-            **data,
-        )
+
+class Pivot(BaseModel):
+    manga_id: int
+    format_id: int
 
 
-@dataclass
-class Data:
+class FormatItem(BaseModel):
+    id: int
+    name: str
+    pivot: Pivot
+
+
+class Data(BaseModel):
     id: int
     name: str
     rus_name: str
     eng_name: str
-    other_names: List[str]
+    otherNames: List[str]
     slug: str
     slug_url: str
     cover: Cover
     background: Background
-    age_restriction: AgeRestriction
+    ageRestriction: AgeRestriction
     site: int
     type: Type
     summary: str
     close_view: int
-    release_date: str
+    releaseDate: str
     views: Views
     rating: Rating
     is_licensed: bool
@@ -278,56 +204,23 @@ class Data:
     teams: List[Team]
     genres: List[Genre]
     tags: List[Tag]
-    publisher: List[Publisher]
-    franchise: List[Franchise]
+    publisher: List[PublisherItem]
+    franchise: List
     authors: List[Author]
     metadata: Metadata
     model: str
     status: Status
     items_count: ItemsCount
-    scanlate_status: ScanlateStatus
+    scanlateStatus: ScanlateStatus
     artists: List[Artist]
-    format: List
-    release_date_string: str
-
-    @classmethod
-    def loads(cls, data: Dict[str, Any]) -> Data:
-        return cls(
-            cover=Cover(**data.pop("cover")),
-            background=Background(**data.pop("background")),
-            age_restriction=AgeRestriction(**data.pop("ageRestriction")),
-            type=Type(**data.pop("type")),
-            views=Views.loads(data.pop("views")),
-            rating=Rating.loads(data.pop("rating")),
-            moderated=Moderated(**data.pop("moderated")),
-            teams=[Team.loads(item) for item in data.pop("teams")],
-            genres=[Genre(**item) for item in data.pop("genres")],
-            tags=[Tag(**item) for item in data.pop("tags")],
-            publisher=[Publisher.loads(item) for item in data.pop("publisher")],
-            franchise=[Franchise(**item) for item in data.pop("franchise")],
-            authors=[Author.loads(item) for item in data.pop("authors")],
-            metadata=Metadata.loads(data.pop("metadata")),
-            status=Status(**data.pop("status")),
-            items_count=ItemsCount(**data.pop("items_count")),
-            scanlate_status=ScanlateStatus(**data.pop("scanlateStatus")),
-            artists=[Artist.loads(item) for item in data.pop("artists")],
-            other_names=data.pop("otherNames"),
-            release_date=data.pop("releaseDate"),
-            release_date_string=data.pop("releaseDateString"),
-            **data,
-        )
+    format: List[FormatItem]
+    releaseDateString: str
 
 
-@dataclass
-class Meta:
+class Meta(BaseModel):
     country: str
 
 
-@dataclass
-class MangaInfoModel:
+class MangaInfoModel(BaseModel):
     data: Data
     meta: Meta
-
-    @classmethod
-    def loads(cls, data: Dict[str, Any]) -> MangaInfoModel:
-        return cls(data=Data.loads(data["data"]), meta=Meta(**data["meta"]))

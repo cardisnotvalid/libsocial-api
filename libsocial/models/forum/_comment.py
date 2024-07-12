@@ -1,49 +1,40 @@
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from typing import Any, List, Optional
+
+from pydantic import BaseModel, Field
 
 
-@dataclass(frozen=True)
-class BodyItem:
+class Op(BaseModel):
     insert: str
 
 
-@dataclass(frozen=True)
-class Comment:
+class Body(BaseModel):
+    ops: List[Op]
+
+
+class Datum(BaseModel):
     id: int
     post_id: int
-    user_id: int
-    username: str
-    avatar: str
-    body: List[BodyItem]
     chatter_discussion_id: int
+    user_id: int
+    body: Body
     created_at: str
     updated_at: str
-    deleted_at: str = field(default=None)
-    reply_user_id: int = field(default=None)
-    reply_username: str = field(default=None)
-
-    @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> "BodyItem":
-        return cls(body=[BodyItem(**x) for x in data.pop("body").get("ops")], **data)
+    deleted_at: Any
+    username: str
+    avatar: str
+    reply_username: Optional[str] = None
+    reply_user_id: Optional[int] = None
 
 
-@dataclass(frozen=True)
-class CommentModel:
+class CommentModel(BaseModel):
     current_page: int
-    data: List[Comment]
+    data: List[Datum]
     first_page_url: str
-    from_: int
-    to: int
+    from_: Optional[int] = Field(None, alias="from")
+    next_page_url: Any
     path: str
     per_page: int
-    next_page_url: str = field(default=None)
-    prev_page_url: str = field(default=None)
-
-    @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> "CommentModel":
-        return cls(
-            from_=data.pop("from"),
-            data=[Comment.from_dict(x) for x in data.pop("data")],
-            **data,
-        )
+    prev_page_url: Any
+    to: Optional[int] = None
