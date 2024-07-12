@@ -81,7 +81,7 @@ class SyncAPIClient(BaseClient[httpx.Client]):
 class AsyncAPIClient(BaseClient[httpx.AsyncClient]):
     _client: httpx.AsyncClient
 
-    def __init__(self) -> None
+    def __init__(self) -> None:
         super().__init__()
 
         self._client = httpx.AsyncClient()
